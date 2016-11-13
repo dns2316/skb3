@@ -1,46 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import fetch from 'isomorphic-fetch';
-import canonize from './canonize';
-import volumes from './volumes';
-
-// ======= 3A NekrasovEV =======
-const AsyncRouter = require("express-async-router").AsyncRouter;
-const router = AsyncRouter();
-const _ = require('lodash');
-
-module.exports = function(param) {
-  router.get("/", async function(req.computer);
-)};
-
-let pathes = [];
-
-function createPath(obj, originPath = '') {
-  _.forIn(obj, function (value, key) {
-    path = originPath;
-    path += `/${key}`;
-    if (_.isObject(value)) {
-      createPath(value, path);
-    } else {
-      pathes.push(path);
-    }
-  });
-  if(originPath)
-  pathes.push(originPath);
-}
-createPath(param);
-
-pathes.forEach((item) => {
-  router.get(item, async function (req, res) {
-    let data = item.split('/').filter((el) => el);
-    let elem = data.reduce(function(item, curent) {
-      return item[current];
-    }, req.computer);
-
-    return await res.json(elem);
-  });
-});
-// ======= end 3A NekrasovEV =======
+import fetch from 'node-fetch';
 
 // ======= 3A =======
 const pcUrl = 'https://gist.githubusercontent.com/isuvorov/ce6b8d87983611482aac89f6d7bc0037/raw/pc.json';
@@ -59,31 +19,69 @@ const app = express();
 app.use(cors());
 
 app.get('/3a', (req, res) => {
-  console.log('params: ' + req.params);
-  console.log(req.params[0]);
-  console.log(canonize(req.query));
-  // if (req.baseUrl != '' || req.baseUrl != null) {
-  //     res.send(pc[req.baseUrl]);
-  // }
-  // else {
-    // res.send(pc);
-  // }
-  // ======= 3A NekrasovEV =======
-  let ret = {};
-  let data = {};
-  req.computer.hdd.forEach((item => {
-    ret[item.volume] = ret[item.volume] || 0;
-    ret[item.volume] += item.size;
-  });
-
-_.forIn(ret, function (value, key) {
-  data[key] =value.toString() + "B";
+  res.json(pc);
 });
 
-return await res.json(data);
+// ======= Списал у iCoderXXI'a =======
+
+function notFound(res) {
+  res.send('Not Found', 404);
+};
+
+app.get('/3a/volumes', (req, res) => {
+  if (pc.hdd) {
+    const relustVolumes = {};
+    pc.hdd.map( (item) => {
+      if (relustVolumes[item.volume]) {
+        relustVolumes[item.volume] += item.size;
+      } else {
+        relustVolumes[item.volume] = item.size;
+      }
+    });
+
+    console.log('|relustVolumes: ' + relustVolumes, '|type: ' + typeof(relustVolumes), '|type "pc": ' + typeof(pc));
+
+    Object.keys(relustVolumes).forEach( (key) => {
+      relustVolumes[key] += 'B'; // B - ?
+    })
+
+    res.json(relustVolumes);
+  } else {
+    // res.send('Enter correct request!');
+    notFound(res);
+  }
 });
-  // ======= end 3A NekrasovEV =======
-// });
+
+app.get('/3a/:var1', (req, res) => {
+  if (pc[req.params.var1] !== undefined) {
+    res.json(pc[req.params.var1]);
+  } else {
+    // res.send('Enter correct request!');
+    notFound(res);
+  }
+});
+
+app.get('/3a/:var1/:var2', (req, res) => {
+  const reqParams = req.params;
+  if (pc[reqParams.var1] !== undefined && pc[reqParams.var1][reqParams.var2] !== undefined) {
+    res.json(pc[reqParams.var1][reqParams.var2]);
+  } else {
+    // res.send('Enter correct request!');
+    notFound(res);
+  }
+});
+
+app.get('/3a/:var1/:var2/:var3', (req, res) => {
+  const reqParams = req.params;
+  if (pc[reqParams.var1] !== undefined && pc[reqParams.var1][reqParams.var2] !== undefined && pc[reqParams.var1][reqParams.var2][reqParams.var3]) {
+    res.json(pc[reqParams.var1][reqParams.var2][reqParams.var3]);
+  } else {
+    // res.send('Enter correct request!');
+    notFound(res);
+  }
+});
+
+// ======= end Списал у iCoderXXI'a =======
 
 app.listen(80, () => {
   console.log('App listening on port 80!');

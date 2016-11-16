@@ -21,15 +21,13 @@ fetch(pcUrl)
   });
   // const sumHdd = JSON.stringify(jsonFile, []);
 // ======= end 3A =======
-
 const app = express();
 app.use(cors());
 
+// ======= 3A =======
 app.get('/3a', (req, res) => {
   res.json(pc);
 });
-
-// ======= Списал у iCoderXXI'a =======
 
 function notFound(res) {
   res.send('Not Found', 404);
@@ -148,10 +146,12 @@ app.get('/3a/:var1', (req, res) => {
   }
 });
 
-app.get('/3a/:var1/:var2', (req, res) => {
+app.get('/3a/:var1/:var2', (req, res) => { // Вместо кучи параметров, можно поставить зведочку * !
   const reqParams = req.params;
   if (pc[reqParams.var1] !== undefined && pc[reqParams.var1][reqParams.var2] !== undefined) {
     res.json(pc[reqParams.var1][reqParams.var2]);
+    console.log('pc[hdd][length]: ' + pc[reqParams.hdd][reqParams.length]);
+    console.log('reqParams: ' + reqParams);
   } else {
     // res.send('Enter correct request!');
     notFound(res);
@@ -168,7 +168,7 @@ app.get('/3a/:var1/:var2/:var3', (req, res) => {
   }
 });
 
-// ======= end Списал у iCoderXXI'a =======
+// ======= end 3A =======
 
 app.listen(80, () => {
   console.log('App listening on port 80!');

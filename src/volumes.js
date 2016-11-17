@@ -1,7 +1,30 @@
 import notFound from './notFound';
-import pc from './pc';
+import requestPc from './pc';
 
-export default async (req, res) => {
+export default async function volumes(req, res) {
+  try {
+    const pc = requestPc()
+    const hddVolumes = {}
+
+    if (pc.hdd) {
+      pc.hdd.forEach(({ volume, size }) => {
+        if (typeof hddVolumes[volume] === 'undefined') hddVolumes[volume] = 0
+        hddVolumes[volume] += size
+      })
+    }
+
+    Object.keys(hddVolumes).forEach(volume => {
+      console.log(`${volume} | ${hddVolumes[volume]}B`)
+    })
+  }
+  catch (e) {
+    console.error('Error when get volumes', e, e.stack)
+  }
+}
+
+// ======
+
+const old = async (req, res) => {
   let pc = await pc();
 
   console.log('start volumes', pc);

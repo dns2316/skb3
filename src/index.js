@@ -18,53 +18,33 @@ const app = express();
 app.use(cors());
 
 // ======= 3A =======
-app.get('/3a', async (req, res) => {
-  const pcOut = await pc();
-  res.json(pcOut);
-});
-
 app.get('/3a/volumes', volumes);
 
+const toType = obj =>
+  ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 
-app.get('/3a*', (req, res) => {
-  const field = pc.getSomeField(req.originalUrl);
-  if (field === undefined) {
+app.get('/3a(/*)?', (req, res) => {
+  console.log(req.url);
+  console.log(req.url.split('/'));
+  const parts = req.url.split('/')
+    .filter(el => el).slice(1)
+    .reduce((prev, curr) => {
+      if (toType(prev) === 'object') {
+        if ({}.hasOwnProperty.call(prev, curr)) {
+          return prev[curr];
+        }
+      } else if (toType(prev) === 'array') {
+        if (!isNaN(curr)) {
+          return prev[curr];
+        }
+      }
+        return undefined;
+    }, pc);
+  if (parts === undefined) {
     notFound(res);
-  } else {
-    res.status(200);
-    if (typeof field === 'object') {
-      console.log('typeof field: ', typeof field);
-      res.send(field);
-    } else {
-      console.log('else typeof field: ', typeof field);
-      res.send(JSON.stringify(field));
-    }
   }
+  res.json(parts);
 });
-
-// app.get('/3a/:var1/:var2', (req, res) => { // Вместо кучи параметров, можно поставить зведочку * !
-//   const reqParams = req.params;
-//   if (pc[reqParams.var1] !== undefined && pc[reqParams.var1][reqParams.var2] !== undefined) {
-//     res.json(pc[reqParams.var1][reqParams.var2]);
-//     console.log('pc[hdd][length]: ' + pc[reqParams.hdd][reqParams.length]);
-//     console.log('reqParams: ' + reqParams);
-//   } else {
-//     // res.send('Enter correct request!');
-//     notFound(res);
-//   }
-// });
-//
-// app.get('/3a/:var1/:var2/:var3', (req, res) => {
-//   const reqParams = req.params;
-//   if (pc[reqParams.var1] !== undefined && pc[reqParams.var1][reqParams.var2] !== undefined && pc[reqParams.var1][reqParams.var2][reqParams.var3]) {
-//     res.json(pc[reqParams.var1][reqParams.var2][reqParams.var3]);
-//   } else {
-//     // res.send('Enter correct request!');
-//     notFound(res);
-//   }
-// });
-
-// ======= end 3A =======
 
 app.listen(80, () => {
   console.log('App listening on port 80!');

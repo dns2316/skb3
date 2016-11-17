@@ -3,7 +3,7 @@ import requestPc from './pc';
 
 export default async function volumes(req, res) {
   try {
-    const pc = requestPc()
+    const pc = await requestPc();
     const hddVolumes = {}
     console.log(pc); // Promise { <pending> }
 
@@ -15,10 +15,10 @@ export default async function volumes(req, res) {
 
 
     Object.keys(hddVolumes).forEach(volume => {
-      outSumHddSize = `${volume} | ${hddVolumes[volume]}B`;
-      console.log(outSumHddSize);
-      res.json(outSumHddSize);
-    })
+      // const hddVolumes += `${volume} | ${hddVolumes[volume]}B`;
+      console.log(`${volume} | ${hddVolumes[volume]}B`);
+    });
+    res.json(hddVolumes);
     } else {
       notFound(res);
     }

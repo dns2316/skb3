@@ -8,9 +8,17 @@ export default () => fetch(pcUrl)
       return pc;
       console.log('pc ', pc);
     })
-    .then(function (res) {
-      console.log('Was parsed json!');
-    })
     .catch (err => {
       console.log('Error: ', err);
     });
+/*
+const url = 'https://gist.githubusercontent.com/isuvorov/ce6b8d87983611482aac89f6d7bc0037/raw/pc.json';
+
+let cachedResult;
+
+const addToCache = _ => { cachedResult = _; return _; }
+
+export default () => cachedResult
+  ? Promise.resolve(cachedResult)
+  : fetch(url).then(res => res.json()).then(addToCache);
+*/

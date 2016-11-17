@@ -2,6 +2,7 @@ import notFound from './notFound';
 import pc from './pc';
 
 export default (req, res) => {
+  let pc = pc();
   console.log('start volumes', pc);
   console.log('start volumes', pc.hdd);
   // "тупо проходим по всем его элементам, и в новый массив суммируем по следующей логике sums[pc.hdd[x].volume] += pc.hdd[x].size"

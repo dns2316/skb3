@@ -18,8 +18,8 @@ const app = express();
 app.use(cors());
 
 // ======= 3A =======
-app.get('/3a', (req, res) => {
-  res.json(pc().then(pc => console.log(pc)));
+app.get('/3a', async (req, res) => {
+  res.json(await pc());
 });
 
 app.get('/3a/volumes', volumes);

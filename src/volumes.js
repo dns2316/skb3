@@ -15,8 +15,8 @@ export default async function volumes(req, res) {
 
 
     Object.keys(hddVolumes).forEach(volume => {
-      // const hddVolumes += `${volume} | ${hddVolumes[volume]}B`;
-      console.log(`${volume} | ${hddVolumes[volume]}B`);
+      hddVolumes[volume] += 'B';
+      console.log(hddVolumes);
     });
     res.json(hddVolumes);
     } else {

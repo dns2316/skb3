@@ -1,17 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 
-// 4 video
-// const bunyan = require('bunyan');
-// const log = bunyan.createLogger({name: 'myapp'});
-// log.info('hi');
-// log.warn({lang: 'en'}, 'Hello my friends!');
-// npm install bunyan
-
 // ======= import 3A =======
-import volumes from './volumes';
-import main3a from './main3a';
+import volumes from './3a/volumes';
+import main3a from './3a/main3a';
 // ======= end import 3A =======
+
+// ======= import 3 practice =======
+import main3practice from './3mongo_practice/main3video';
+// ======= end import 3 practice =======
 
 const app = express();
 app.use(cors());
@@ -19,7 +16,8 @@ app.use(cors());
 // ======= 3A =======
 app.get('/3a/volumes', volumes);
 app.get('/3a(/*)?', main3a);
+app.get('/3practice', main3practice);
 
-app.listen(80, () => {
-  console.log('App listening on port 80!');
+app.listen(3000, () => {
+  console.log('App listening on port 3000!');
 });

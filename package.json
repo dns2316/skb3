@@ -30,12 +30,15 @@
   "dependencies": {
     "babel-cli": "^6.18.0",
     "babel-runtime": "^6.11.6",
+    "bluebird": "https://registry.npmjs.org/bluebird/-/bluebird-3.4.6.tgz",
     "bunyan": "^1.8.4",
     "cors": "^2.8.1",
     "es6-promise": "^4.0.5",
     "express": "^4.14.0",
     "isomorphic-fetch": "https://registry.npmjs.org/isomorphic-fetch/-/isomorphic-fetch-2.2.1.tgz",
-    "node-fetch": "^1.6.3"
+    "mongoose": "^4.6.8",
+    "node-fetch": "^1.6.3",
+    "sequelize": "^3.27.0"
   },
   "devDependencies": {
     "babel-cli": "^6.16.0",

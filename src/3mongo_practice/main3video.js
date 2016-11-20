@@ -9,7 +9,7 @@ import Ball from './balls';
 import User from './user';
 
 
-export default async function main3a(req, res) {
+export default async function mongo_practice3(req, res) {
   try {
     mongoose.Promise = Promise;
     mongoose.connect('mongodb://publicdb.mgbeta.ru/dns2316');
@@ -19,31 +19,21 @@ export default async function main3a(req, res) {
 
     const users = await User.find();
     const balls = await Ball.find();
+    const caseForSwitch = req.params.userballs;
 
-    console.log(req.url);
-    const parts = req.url.split('/') // Делит строку на массив делителем '/'
-      .filter(el => el).slice(1,2); // Берет элементы с индексом 1+ (0 индекс = 3а)
-    console.log(parts);
-    parts.map(function (part) {
-      switch (part) {
-      case users:
-        return res.json(users);
-        break;
-      case balls:
-        return res.json(balls);
-        break;
-      default:
-        return notFound(res);
-    }
-  })
+    console.log(typeof caseForSwitch, caseForSwitch);
 
-    //
-    // const users = await.User.find();
-    // return res.json(users);
-    //
-    // const balls = await.Ball.find();
-    // return res.json(balls);
-    //
+    switch (caseForSwitch) {
+    case 'users':
+      return res.json(users);
+      break;
+    case 'balls':
+      return res.json(balls);
+      break;
+    default:
+      return notFound(res);
+  }
+
     // const data = {
 //       user: {
 //         name: 'dns2316',
@@ -69,7 +59,7 @@ export default async function main3a(req, res) {
       // res.send('Item was saved!');
   }
   catch (err) {
-    console.error('Error when get main3a', err, err.stack)
+    console.error('Error when get mongo_practice3', err, err.stack)
   }
 }
 

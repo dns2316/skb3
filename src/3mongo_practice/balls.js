@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import _ from 'lodash';
 
 const { Schema } = mongoose;
 
@@ -13,17 +14,7 @@ const BallSchema = new Schema({
   timestamps: true,
 });
 
+BallSchema.methods.toJSON = function () {
+  return _.pick(this, ['name', 'type', 'owner']);
+};
 export default mongoose.model('Ball', BallSchema);
-
-// const blogSchema = new Schema({
-//   title: String,
-//   author: String,
-//   body: String,
-//   comments: [{body: String, date: Date}],
-//   date: { type: Date, default: Date.now},
-//   hidden: Boolean,
-//   meta: {
-//     votes: Number,
-//     favs: Number,
-//   }
-// });

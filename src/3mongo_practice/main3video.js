@@ -17,21 +17,25 @@ export default async function main3a(req, res) {
     const app = express();
     app.use(cors());
 
+    const users = await User.find();
+    const balls = await Ball.find();
+
+    console.log(req.url);
     const parts = req.url.split('/') // Делит строку на массив делителем '/'
       .filter(el => el).slice(1,2); // Берет элементы с индексом 1+ (0 индекс = 3а)
     console.log(parts);
-    switch (parts) {
+    parts.map(function (part) {
+      switch (part) {
       case users:
-        const users = await User.find();
         return res.json(users);
         break;
       case balls:
-        const balls = await Ball.find();
         return res.json(balls);
         break;
       default:
         return notFound(res);
     }
+  })
 
     //
     // const users = await.User.find();
@@ -62,7 +66,7 @@ export default async function main3a(req, res) {
 //
 // saveDataInDb(data);
 
-      res.send('Item was saved!');
+      // res.send('Item was saved!');
   }
   catch (err) {
     console.error('Error when get main3a', err, err.stack)

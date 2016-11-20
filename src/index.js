@@ -16,7 +16,10 @@ app.use(cors());
 // ======= 3A =======
 app.get('/3a/volumes', volumes);
 app.get('/3a(/*)?', main3a);
-app.get('/3practice(/*)?', main3practice);
+app.get('/3practice', main3practice);
+app.get('/3practice/balls', main3practice);
+app.get('/3practice/users', main3practice);
+
 
 app.listen(3000, () => {
   console.log('App listening on port 3000!');

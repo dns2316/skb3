@@ -3,34 +3,71 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import Promise from 'bluebird';
 
+import notFound from '../3a/notFound';
 import saveDataInDb from './saveDataInDb';
+import Ball from './balls';
+import User from './user';
+
 
 export default async function main3a(req, res) {
   try {
     mongoose.Promise = Promise;
     mongoose.connect('mongodb://publicdb.mgbeta.ru/dns2316');
 
-    const data = {
-      user: {
-        name: 'dns2316',
-      },
-      balls: [
-        {
-          name: 'Geary',
-          type: 'football',
-        },
-        {
-          name: 'Luis',
-          type: 'basketball',
-        },
-        {
-          name: 'Poll',
-          type: 'volleyball',
-        },
-      ],
-    };
+    const app = express();
+    app.use(cors());
 
-saveDataInDb(data);
+    const parts = req.url.split('/') // Делит строку на массив делителем '/'
+      .filter(el => el).slice(1,2); // Берет элементы с индексом 1+ (0 индекс = 3а)
+    console.log(parts);
+    switch (parts) {
+      case users:
+        const users = await User.find();
+        return res.json(users);
+        break;
+      case balls:
+        const balls = await Ball.find();
+        return res.json(balls);
+        break;
+      default:
+        return notFound(res);
+    }
+
+    //
+    // const users = await.User.find();
+    // return res.json(users);
+    //
+    // const balls = await.Ball.find();
+    // return res.json(balls);
+    //
+    // const data = {
+//       user: {
+//         name: 'dns2316',
+//       },
+//       balls: [
+//         {
+//           name: 'Geary',
+//           type: 'football',
+//         },
+//         {
+//           name: 'Luis',
+//           type: 'basketball',
+//         },
+//         {
+//           name: 'Poll',
+//           type: 'volleyball',
+//         },
+//       ],
+//     };
+//
+// saveDataInDb(data);
+
+      res.send('Item was saved!');
+  }
+  catch (err) {
+    console.error('Error when get main3a', err, err.stack)
+  }
+}
 
 //     const Ball = mongoose.model('Ball', {
 //       type: String,
@@ -49,9 +86,3 @@ saveDataInDb(data);
 //       .catch((err) => {
 //         console.log('err: ', err);
 //       });
-      res.send('Item was saved!');
-  }
-  catch (err) {
-    console.error('Error when get main3a', err, err.stack)
-  }
-}

@@ -4,6 +4,7 @@ export default function canonize(url) {
               // .replace(/-*/g, '')
               .replace(/\s/, '')
               .replace('%20', '')
+              .replace('%23', '')
               .replace(/www./, '');
   console.log('url: ', url);
   const re = /^(.{5})(\w*=)?(([a-z]*:)?\/*)?(\w*\.\w*\/*)?(@)?(\w*(\.\w*)?)/;
@@ -12,7 +13,8 @@ export default function canonize(url) {
 
   // console.log(/^\-/.test(color));
 console.log(color);
-if (!color || color.length < 3 || color.length > 6 || /[g-z]/.test(color) || true != /[color]/.test(url)) {
+console.log(/[color]/.test(url));
+if (!color || color.length < 3 || color.length > 6 || /[g-z]/.test(color) || false == /color/.test(url) || color.length == 4) {
   return 'Invalid color';
 } else if (color.length < 6) {
     let colored = '';

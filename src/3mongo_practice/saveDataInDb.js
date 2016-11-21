@@ -15,7 +15,7 @@ export default async function saveDataInDb(data) {
     console.log('saveDataInDb was saved');;
     return {
       user,
-      pets: await Promise.all(promises),
+      balls: await Promise.all(promises),
     };
   } catch (err) {
     console.log('error in saveDataInDb: ', err);

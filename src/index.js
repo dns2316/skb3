@@ -1,22 +1,53 @@
 import express from 'express';
 import cors from 'cors';
+import mongoose from 'mongoose';
+import Promise from 'bluebird';
+import _ from 'lodash';
 
-// ======= import 3A =======
-// import volumes from './3a/volumes';
-// import main3a from './3a/main3a';
-// ======= end import 3A =======
+import notFound from './3a/notFound';
+import Ball from './3mongo_practice/balls';
+import User from './3mongo_practice/user';
+import addToBase from './3mongo_practice/addToBase';
 
 // ======= import 3 practice =======
-import mongo_practice3 from './3mongo_practice/main3video';
+// import mongoPractice3 from './3mongo_practice/main3video';
+// export function connectToMong () { return mongoose.connect('mongodb://publicdb.mgbeta.ru/dns2316')};
+mongoose.Promise = Promise;
+mongoose.connect('mongodb://publicdb.mgbeta.ru/dns2316');
 // ======= end import 3 practice =======
 
 const app = express();
 app.use(cors());
 
-// ======= 3A =======
-// app.get('/3a/volumes', volumes);
-// app.get('/3a(/*)?', main3a);
-app.get('/3practice/:userballs', mongo_practice3);
+app.get('/3practice/:userballs', async (req, res) => {
+  try {
+    const app = express();
+    app.use(cors());
+
+    const users = await User.find();
+    const balls = await Ball.find().populate('owner'); // Проверяет все элементы в бд по полям owner.
+    const caseForSwitch = req.params.userballs;
+
+    console.log(typeof caseForSwitch, caseForSwitch);
+
+    switch (caseForSwitch) {
+    case 'users':
+      return res.json(users);
+      break;
+    case 'balls':
+      return res.json(balls);
+      break;
+    case 'add':
+      return addToBase;
+      return res.send('data was be loaded');
+      break;
+    default:
+      return notFound(res);
+    }
+  } catch (err) {
+    console.error('Error when get mongo_practice3', err, err.stack)
+  }
+});
 
 app.listen(3000, () => {
   console.log('App listening on port 3000!');

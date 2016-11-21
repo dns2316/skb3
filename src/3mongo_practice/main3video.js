@@ -2,23 +2,24 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import Promise from 'bluebird';
+import _ from 'lodash';
 
 import notFound from '../3a/notFound';
-import saveDataInDb from './saveDataInDb';
 import Ball from './balls';
 import User from './user';
-
+import addToBase from './addToBase';
+import connectToMong from './main3video';
 
 export default async function mongo_practice3(req, res) {
   try {
     mongoose.Promise = Promise;
-    mongoose.connect('mongodb://publicdb.mgbeta.ru/dns2316');
+    connectToMong;
 
     const app = express();
     app.use(cors());
 
     const users = await User.find();
-    const balls = await Ball.find();
+    const balls = await Ball.find().populate('owner'); // Проверяет все элементы в бд по полям owner.
     const caseForSwitch = req.params.userballs;
 
     console.log(typeof caseForSwitch, caseForSwitch);
@@ -30,53 +31,13 @@ export default async function mongo_practice3(req, res) {
     case 'balls':
       return res.json(balls);
       break;
+    case 'add':
+      return addToBase;
+      break;
     default:
       return notFound(res);
-  }
-
-    // const data = {
-//       user: {
-//         name: 'dns2316',
-//       },
-//       balls: [
-//         {
-//           name: 'Geary',
-//           type: 'football',
-//         },
-//         {
-//           name: 'Luis',
-//           type: 'basketball',
-//         },
-//         {
-//           name: 'Poll',
-//           type: 'volleyball',
-//         },
-//       ],
-//     };
-//
-// saveDataInDb(data);
-
-      // res.send('Item was saved!');
-  }
-  catch (err) {
+    }
+  } catch (err) {
     console.error('Error when get mongo_practice3', err, err.stack)
   }
 }
-
-//     const Ball = mongoose.model('Ball', {
-//       type: String,
-//       name: String,
-//     });
-//
-//     const football = new Ball({
-//       name: 'geary',
-//       type: 'football',
-//     });
-//
-//     football.save()
-//       .then(() => {
-//         console.log('item was saved');
-//       })
-//       .catch((err) => {
-//         console.log('err: ', err);
-//       });

@@ -1,6 +1,7 @@
 import saveDataInDb from './saveDataInDb';
+import Promise from 'bluebird';
 
-export default function data () {
+export default function addToBase () {
   const dataConst = {
       user: {
         name: 'dns2316',
@@ -20,8 +21,5 @@ export default function data () {
         },
       ],
     };
-saveDataInDb(dataConst)
-.then(() => {
-  // res.send('data was be loaded');
-});
+saveDataInDb(dataConst);
 }

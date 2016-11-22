@@ -41,15 +41,30 @@ app.get('/:userballs', async (req, res) => {
       return addToBase(),
       res.send('Data was be loaded!'); // сделать через then, что бы небыло ложного сообщения.
       break;
-    case 'add':
-      const add = req.body;
-      console.log(add);
-      return res.json(await saveDataInDb(add));
     default:
       return notFound(res);
     }
   } catch (err) {
     console.error('Error when get mongo_practice3', err, err.stack)
+  }
+});
+
+app.post('/:add', async (req, res) => {
+  try{
+    const caseForSwitchPost = req.params.add;
+
+    switch (caseForSwitchPost) {
+      case 'add':
+        const add = req.body;
+        console.log(add);
+        return res.json(await saveDataInDb(add));
+        break;
+      default:
+        return notFound(res, 'Pls write json')
+    }
+  } catch (err) {
+    res.send('Error in post: ', err);
+    console.log('Error in post: ', err);
   }
 });
 

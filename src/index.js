@@ -1,17 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 
-// ======= import 3A =======
-// import volumes from './3a/volumes';
-// import main3a from './3a/main3a';
-// ======= end import 3A =======
-
-// ======= import 3 practice =======
-// import mongo_practice3 from './3mongo_practice/main3video';
-// ======= end import 3 practice =======
+// Почистить canonize оставить там только обработку ссылки (или вообще убрать canonize и использовать 'color =').
+// Заюзать библиотеку https://github.com/morishitter/is-color
 
 // ======= import 2d color =======
-import main2d from './color2d/main2d';
+import main2d from './main2d';
 // ======= end import 2d color =======
 
 

@@ -3,12 +3,15 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import Promise from 'bluebird';
 import _ from 'lodash';
+import bodyParser from 'body-parser'; // Почитать про эту либу.
 
 import notFound from './3a/notFound';
 import Ball from './3mongo_practice/balls';
 import User from './3mongo_practice/user';
 import addToBase from './3mongo_practice/addToBase';
 import saveDataInDb from './3mongo_practice/saveDataInDb';
+import sandbox from './3mongo_practice/sandbox';
+import isAdmin from './3mongo_practice/middlewares/isAdmin';
 
 // ======= import 3 practice =======
 // import mongoPractice3 from './3mongo_practice/main3video';
@@ -18,8 +21,10 @@ mongoose.connect('mongodb://publicdb.mgbeta.ru/dns2316');
 
 const app = express();
 app.use(cors());
+app.use(bodyParser.json());
+// app.use(isAdmin);
 
-app.get('/:userballs', async (req, res) => {
+app.get('/:userballs', isAdmin, async (req, res) => {
   try {
     const app = express();
     app.use(cors());
@@ -49,21 +54,37 @@ app.get('/:userballs', async (req, res) => {
   }
 });
 
-app.post('/:add', async (req, res) => {
+app.get('/clear', isAdmin, async (req, res) => { // Либо для всего прописывать роутеры, либо ставить мидлвару isAdmin на роутер с кейсами.
+      await User.remove({}); // Либо узнать как на отдельный кейс ставить мидлвару.
+      await Ball.remove({}); // Этот роутер не работает, пишет Not Found - срабатывает функция notFound. Оставил isAdmin на роутере с кейсами.
+      res.send('DB was removed!');
+});
+
+app.post('/:add', isAdmin, async (req, res) => {
   try{
     const caseForSwitchPost = req.params.add;
 
     switch (caseForSwitchPost) {
       case 'add':
         const add = req.body;
-        console.log(add);
-        return res.json(await saveDataInDb(add));
+        if (!add.user) return notFound(res, 'Write correct "user".', 400);
+        if (!add.balls) add.balls = [];
+
+        const user = await User.findOne({
+          name: add.user.name
+        });
+        if (user) return notFound(res, 'username is exist.', 400);
+        try {
+          return res.json(await saveDataInDb(add));
+        } catch (err) {
+          return res.status(500).json(err);
+        }
         break;
       default:
-        return notFound(res, 'Pls write json')
-    }
+        return notFound(res, 'Pls write json, and correct url', 404);
+    };
   } catch (err) {
-    res.send('Error in post: ', err);
+    notFound(res, err, 500);
     console.log('Error in post: ', err);
   }
 });

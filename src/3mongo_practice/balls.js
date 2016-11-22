@@ -4,11 +4,19 @@ import _ from 'lodash';
 const { Schema } = mongoose;
 
 const BallSchema = new Schema({
-  type: String,
-  name: String,
+  type: {
+    type: String,
+    required: true,
+    enum: ['football', 'volleyball', 'basketball'],
+  },
+  name: {
+      type: String,
+      required: true,
+  },
   owner: {
     type: Schema.Types.ObjectId,
     ref: 'User',
+    required: true,
   },
 }, {
   timestamps: true,

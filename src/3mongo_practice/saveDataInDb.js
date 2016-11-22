@@ -6,8 +6,8 @@ export default async function saveDataInDb(data) {
   try {
     const user = new User(data.user);
     await user.save();
-    const promises = data.balls.map((balls) => {
-      const ballData = Object.assign({}, balls, {
+    const promises = data.balls.map((ball) => {
+      const ballData = Object.assign({}, ball, {
         owner: user._id, //eslint disable line?!
       });
       return (new Ball(ballData)).save();

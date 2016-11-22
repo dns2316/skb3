@@ -15,6 +15,6 @@ const BallSchema = new Schema({
 });
 
 BallSchema.methods.toJSON = function () {
-  return _.pick(this, ['name', 'type', 'owner']);
+  return _.pick(this, ['name', 'type', 'owner', 'createdAt']);
 };
 export default mongoose.model('Ball', BallSchema);

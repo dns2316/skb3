@@ -43,7 +43,8 @@ app.get('/:userballs', async (req, res) => {
       break;
     case 'add':
       const add = req.body;
-      return saveDataInDb(add)
+      console.log(add);
+      return res.json(await saveDataInDb(add));
     default:
       return notFound(res);
     }

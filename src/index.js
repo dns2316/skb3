@@ -1,13 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 
-// Почистить canonize оставить там только обработку ссылки (или вообще убрать canonize и использовать 'color =').
-// Заюзать библиотеку https://github.com/morishitter/is-color
-
 // ======= import 2d color =======
 import main2d from './main2d';
 // ======= end import 2d color =======
-
 
 const app = express();
 app.use(cors());

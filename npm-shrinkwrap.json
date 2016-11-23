@@ -944,6 +944,11 @@
       "resolved": "https://registry.npmjs.org/cryptiles/-/cryptiles-2.0.5.tgz",
       "dev": true
     },
+    "css-color-names": {
+      "version": "0.0.1",
+      "from": "css-color-names@0.0.1",
+      "resolved": "https://registry.npmjs.org/css-color-names/-/css-color-names-0.0.1.tgz"
+    },
     "d": {
       "version": "0.1.1",
       "from": "d@>=0.1.1 <0.2.0",
@@ -1591,6 +1596,11 @@
       "resolved": "https://registry.npmjs.org/hawk/-/hawk-3.1.3.tgz",
       "dev": true
     },
+    "hex-color-regex": {
+      "version": "1.0.3",
+      "from": "hex-color-regex@>=1.0.3 <2.0.0",
+      "resolved": "https://registry.npmjs.org/hex-color-regex/-/hex-color-regex-1.0.3.tgz"
+    },
     "hoek": {
       "version": "2.16.3",
       "from": "hoek@>=2.0.0 <3.0.0",
@@ -1606,6 +1616,16 @@
       "version": "1.2.0",
       "from": "hooks-fixed@1.2.0",
       "resolved": "https://registry.npmjs.org/hooks-fixed/-/hooks-fixed-1.2.0.tgz"
+    },
+    "hsl-regex": {
+      "version": "1.0.0",
+      "from": "hsl-regex@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/hsl-regex/-/hsl-regex-1.0.0.tgz"
+    },
+    "hsla-regex": {
+      "version": "1.0.0",
+      "from": "hsla-regex@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/hsla-regex/-/hsla-regex-1.0.0.tgz"
     },
     "http-errors": {
       "version": "1.5.1",
@@ -1699,6 +1719,11 @@
       "version": "1.1.4",
       "from": "is-buffer@>=1.0.2 <2.0.0",
       "resolved": "https://registry.npmjs.org/is-buffer/-/is-buffer-1.1.4.tgz"
+    },
+    "is-color": {
+      "version": "0.2.0",
+      "from": "is-color@>=0.2.0 <0.3.0",
+      "resolved": "https://registry.npmjs.org/is-color/-/is-color-0.2.0.tgz"
     },
     "is-dotfile": {
       "version": "1.0.2",
@@ -2807,6 +2832,16 @@
       "version": "2.2.0",
       "from": "retry-as-promised@>=2.0.0 <3.0.0",
       "resolved": "https://registry.npmjs.org/retry-as-promised/-/retry-as-promised-2.2.0.tgz"
+    },
+    "rgb-regex": {
+      "version": "1.0.1",
+      "from": "rgb-regex@>=1.0.1 <2.0.0",
+      "resolved": "https://registry.npmjs.org/rgb-regex/-/rgb-regex-1.0.1.tgz"
+    },
+    "rgba-regex": {
+      "version": "1.0.0",
+      "from": "rgba-regex@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/rgba-regex/-/rgba-regex-1.0.0.tgz"
     },
     "right-align": {
       "version": "0.1.3",

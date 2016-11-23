@@ -13,9 +13,6 @@ const app = express();
 app.use(cors());
 
 // ======= 3A =======
-// app.get('/3a/volumes', volumes);
-// app.get('/3a(/*)?', main3a);
-// app.get('/3practice/:userballs', mongo_practice3);
 app.get('/2d', main2d);
 
 app.listen(3000, () => {

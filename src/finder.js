@@ -3,7 +3,7 @@ export default async function finder(res, place, word, name, target) {
   try {
     function isSearch(mark, target) {
       if (target === mark) {
-        return
+        return true;
       }
     }
 

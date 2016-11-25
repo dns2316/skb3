@@ -26,18 +26,17 @@ app.get('/users', async (req, res) => {
   return res.json(uPi.users);
 });
 
-app.get('/users/:id', async (req, res) => {
+app.get('/users/:idOrUsername', async (req, res) => {
   const uPi = await usersPets();
-  const idParams = req.params.id;
-  // if (idParams > 0 && idParams.toType() === 'number') {
-    // return res.json(uPi.users[idParams])
-  // }
-  // else if (idParams.toType() === 'string') {
+  const idParams = req.params.idOrUsername;
+  console.log(idParams);
+  console.log(/\d/.test(idParams));
+  if (/\d/.test(idParams) === true) {
+    finder(res, uPi.users, idParams, 'users', 'id');
+  }
+  else if (/[a-z]/.test(idParams) === true) {
     finder(res, uPi.users, idParams, 'users', 'username');
-  // }
-  // else {
-    // notFound(res);
-  // }
+  }
 });
 
 app.get('/users/:username', async (req, res) => {

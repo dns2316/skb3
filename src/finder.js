@@ -1,18 +1,20 @@
 export default async function finder(res, place, word, name, target) {
   console.log('start finder');
   try {
+    function isSearch(mark, target) {
+      if (target === mark) {
+        return
+      }
+    }
+
     let result = {}
     console.log(word, name);
-    // console.log(place); //worked.
     if (place) {
-      place.forEach(({ target.username }) => {
-        if (typeof result[name] === 'undefined') result[name] = {};
-        console.log(word, target);
-        if (word === target.username) {
-          result[name] = {id, usertarget, fulltarget, password, values};
-        }
+      place.map(function(fromMap) {
+        place.filter(isSearch(word, fromMap));
+        return fromMap
       })
-    res.json(result);
+    res.json(fromMap);
     } else {
       notFound(res);
     }

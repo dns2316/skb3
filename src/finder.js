@@ -5,9 +5,10 @@ export default async function finder(res, place, word, name, target) {
     console.log(word, name);
     // console.log(place); //worked.
     if (place) {
-      place.forEach(({ target }) => {
+      place.forEach(({ target.username }) => {
         if (typeof result[name] === 'undefined') result[name] = {};
-        if (word === target) {
+        console.log(word, target);
+        if (word === target.username) {
           result[name] = {id, usertarget, fulltarget, password, values};
         }
       })

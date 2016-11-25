@@ -1,14 +1,14 @@
 export default async function finder(res, place, word, name, target) {
   console.log('start finder');
   try {
-    const result = {}
+    let result = {}
     console.log(word, name);
     // console.log(place); //worked.
     if (place) {
       place.forEach(({ target }) => {
-        if (typeof result[name] === 'undefined') result[name] = 0;
+        if (typeof result[name] === 'undefined') result[name] = {};
         if (word === target) {
-          result[name] += id, username, fullname, password, values;
+          result[name] = {id, usertarget, fulltarget, password, values};
         }
       })
     res.json(result);

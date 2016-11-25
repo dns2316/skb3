@@ -10,6 +10,9 @@ import finder from './finder'
 const app = express();
 app.use(cors());
 
+const toType = function(obj) {
+  return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+}
 let index = [];
 
 // ======= 3b =======
@@ -25,19 +28,23 @@ app.get('/users', async (req, res) => {
 
 app.get('/users/:id', async (req, res) => {
   const uPi = await usersPets();
-  const idParams = req.params.id - 1;
-  if (idParams > 0) {
-    console.log(uPi.users[idParams]);
-    return res.json(uPi.users[idParams])
-  } else {
-    notFound(res);
-  }
+  const idParams = req.params.id;
+  // if (idParams > 0 && idParams.toType() === 'number') {
+    // return res.json(uPi.users[idParams])
+  // }
+  // else if (idParams.toType() === 'string') {
+    finder(res, uPi.users, idParams, 'users', 'username');
+  // }
+  // else {
+    // notFound(res);
+  // }
 });
 
 app.get('/users/:username', async (req, res) => {
   const idParams = req.params.username;
+  console.log(idParams);
   const uPi = await usersPets();
-  res.json(finder(uPi.users, username, users));
+  finder(uPi.users, username, users);
 });
 
 app.listen(3000, () => {

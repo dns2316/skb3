@@ -1,18 +1,18 @@
 import usersPets from './usersPets';
 
-export default async function searchById(res, id, target) {
+export default function searchById(res, id, target, uPi) {
   const re = /[\d]+/; // '+' - 1+ numbers, '*' - 0+ numbers!
-  const uPi = await usersPets();
+  // const uPi = await usersPets();
   if (id) {
     if (target == 'users') {
       let users = uPi.users.slice();
       if (re.test(id)) { //if id have only 0-9
           users = users.filter(item => item.id == id);}
-      else if (re.test(id)) {
+      else if (!re.test(id)) {
         users = users.filter(item => item.username == id);
       }
         if (users.length > 0) {
-          return res.json(users[0]);
+          return users[0];
         }
       }
     }

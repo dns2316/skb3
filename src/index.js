@@ -1,10 +1,12 @@
 import express from 'express';
 import cors from 'cors';
+import _ from 'lodash';
 
 // ======== import 3b ========
 import usersPets from './usersPets';
 import notFound from './notFound';
 // import finder from './finder'
+import searchById from './searchById';
 // ======= end import 3b =======
 
 const app = express();
@@ -22,26 +24,24 @@ app.get('/', async (req, res) => {
 
 app.get('/users', async (req, res) => {
   const uPi = await usersPets();
-  res.json(uPi.users)
+  const havePet = req.query.havePet;
+  let users = uPi.users.slice();
+
+  if (havePet) {
+    let searchByType = uPi.pets.slice()
+      .filter(pet => pet.type == havePet)
+      .map(pet => pet.userId);
+      console.log(searchByType);
+    users = users.filter(user => _.indexOf(searchByType, user.id) !== -1);
+  }
+  res.json(users)
 });
 
 app.get('/users/:id', async (req, res) => { // params id or username
   const uPi = await usersPets();
   try{
-    const p = req.params;
-    const re = /[\d]+/; // '+' - 1+ numbers, '*' - 0+ numbers!
-
-    if (p.id) {
-      let users = uPi.users.slice();
-      if (re.test(p.id)) { //if id have only 0-9
-          users = users.filter(item => item.id == p.id);}
-      else if (re.test(p.id)) {
-        users = users.filter(item => item.username == p.id);
-      }
-        if (users.length > 0) {
-          return res.json(users[0]);
-        }
-      }
+    const paramsId = req.params.id;
+    searchById(res, paramsId, 'users');
   } catch (err){
     console.log('/users catch: ', err);
     notFound(res);
@@ -56,22 +56,18 @@ app.get('/pets', async (req, res) => {
 app.get('/pets/:id', async (req, res) => { // params id or username
   const uPi = await usersPets();
   try{
-    const p = req.params;
-    const re = /[\d]+/; // '+' - 1+ numbers, '*' - 0+ numbers!
-
-    if (p.id) {
-      let pets = uPi.pets.slice();
-      if (re.test(p.id)) { //if id have only 0-9
-          pets = pets.filter(item => item.id == p.id);
-        if (pets.length > 0) {
-          return res.json(pets[0]);
-        }
-      }
-    }
+    const paramsId = req.params.id;
+    searchById(res, paramsId, 'pets');
   } catch (err){
-    console.log('/users catch: ', err);
+    console.log('/pets catch: ', err);
     notFound(res);
   }
+});
+
+app.get('/users/:id/pets', (res, req) => {
+  const p = req.params;
+  console.log(p);
+  res.send('ok, id - ');
 });
 
 app.listen(3000, () => {

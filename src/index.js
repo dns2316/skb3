@@ -12,10 +12,6 @@ const app = express();
 app.use(cors());
 
 // ======= functions =======
-// const uPi = async function uPi() {
-//   return await usersPets();
-// };
-// console.log(usersPets);
 function searchByTypePet(uPi, target) {
   console.log(uPi.pets.slice().filter(pet => pet.type == target));
   return uPi.pets.slice()
@@ -101,6 +97,14 @@ app.get('/pets/:id', async (req, res) => { // params id or username. Поиск 
   const uPi = await usersPets();
   try{
     const paramsId = req.params.id;
+    if (paramsId == 'populate') {
+      const usersList = uPi.users.slice();
+      const petsList = uPi.pets.slice();
+      const result = usersList.map(user => petsList
+        .filter(pet => pet.userId == user.id));
+      console.log(result);
+      res.send(result);
+    }
     const result = searchById(res, paramsId, 'pets', uPi);
     res.json(result);
   } catch (err) {
@@ -124,16 +128,6 @@ app.get('/users/:id/pets', async (req, res) => { // список животны�
   } catch (err) {
     console.log('/users/:id/pets catch: ', err);
   }
-});
-
-// populate
-
-app.get('/pets/populate', async (req, res) => {
-  const uPi = await usersPets(); console.log(uPi);
-  const usersList = uPi.users.slice(); console.log(usersList);
-  const result = usersList.map(users => users.filter(pet => pet.userId === users.id));
-  console.log(result);
-  res.send(result);
 });
 
 app.listen(3000, () => {

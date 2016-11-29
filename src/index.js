@@ -12,13 +12,13 @@ const app = express();
 app.use(cors());
 
 // ======= functions =======
-function searchByTypePet(uPi, target) {
+function searchByTypePet(uPi, target) { // Найти совпадения id юзера в userId пета, и показать пета с совпадением
   console.log(uPi.pets.slice().filter(pet => pet.type == target));
   return uPi.pets.slice()
     .filter(pet => pet.type === target);
 }
 
-function searchByAgePet(uPi, target, level = 'gt' || 'lt') {
+function searchByAgePet(uPi, target, level = 'gt' || 'lt') { // Поиск по возрасту пета
   if (level == 'gt') { // Старше
     console.log(uPi.pets.slice().filter(pet => pet.age >= target));
     return uPi.pets.slice()
@@ -29,6 +29,28 @@ function searchByAgePet(uPi, target, level = 'gt' || 'lt') {
     return uPi.pets.slice()
       .filter(pet => pet.age <= target); // меньше или равно
   }
+}
+
+function populatePets(uPi) {
+  const usersList = uPi.users.slice();
+  const petsList = uPi.pets.slice();
+  let petsPopulate = petsList.map( pet => ({
+    ...pet,
+    user: usersList.filter( user => user.id == pet.userId )[0] // Зачем тут индекс [0]? Добавляет в пета весь елемент юзера!
+  }));
+  console.log(petsPopulate);
+  return petsPopulate;
+}
+
+function populateUsers(uPi) {
+  const usersList = uPi.users.slice();
+  const petsList = uPi.pets.slice();
+  let petsPopulate = usersList.map( users => ({
+    ...users,
+    pets: petsList.filter( pet => users.id == pet.userId ) // Добавляет всех петов!
+  }));
+  console.log(petsPopulate);
+  return petsPopulate;
 }
 // ======= end functions =======
 
@@ -66,8 +88,12 @@ app.get('/users/:id', async (req, res) => { // params id or username. Данны
   const uPi = await usersPets();
   try{
     const paramsId = req.params.id;
+    if (paramsId == 'populate') {
+      res.send(populateUsers(uPi));
+    } else {
     const result = searchById(res, paramsId, 'users', uPi);
     res.json(result);
+    }
   } catch (err) {
     console.log('/users catch: ', err);
     notFound(res);
@@ -98,15 +124,11 @@ app.get('/pets/:id', async (req, res) => { // params id or username. Поиск 
   try{
     const paramsId = req.params.id;
     if (paramsId == 'populate') {
-      const usersList = uPi.users.slice();
-      const petsList = uPi.pets.slice();
-      const result = usersList.map(user => petsList
-        .filter(pet => pet.userId == user.id));
-      console.log(result);
-      res.send(result);
+      res.send(populatePets(uPi));
+    } else {
+      const result = searchById(res, paramsId, 'pets', uPi);
+      res.json(result);
     }
-    const result = searchById(res, paramsId, 'pets', uPi);
-    res.json(result);
   } catch (err) {
     console.log('/pets catch: ', err);
     notFound(res);

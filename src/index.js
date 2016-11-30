@@ -102,24 +102,32 @@ app.get('/', async (req, res) => { // Список всей исходной б�
 // app.get('/:target/:id' { target: 'users', id: '3' }
 
 app.get('/users', async (req, res) => { // Cписок пользователей
-  const uPi = await usersPets();
+  try{
+    const uPi = await usersPets();
+    return uPi;
+  } catch (err) {
+    console.log('err upi: ', err);
+  }
   const havePetParam = req.query.havePet;
-  const type = req.query.type; console.log(type);
-  let users = uPi.users.slice();
-
+  const type = req.query.type;
+  let usersList = uPi.users.slice();
+try{
   if (havePet || type) {
     if (havePet) { // Пользователи у которых есть животные type которых указан при запросе в url. /users?havePet=
-      res.send(havePet(uPi, havePetParam));
+      usersList = havePet(uPi, havePetParam);
     }
     if (type) {
-      const resultByPetType = searchByTypePet(uPi, type);
-      res.json(resultByPetType);
+      usersList = searchByTypePet(uPi, type);
     } else {
       notFound(res);
     }
+    res.send(usersList);
   } else {
-    res.send(users);
+    res.json(usersList);
   }
+} catch (err) {
+  console.log('err in /user: ', err);
+}
 });
 
 app.get('/users/:id', async (req, res) => { // params id or username. Данные конкретного пользователя по его ID

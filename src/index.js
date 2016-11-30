@@ -13,18 +13,26 @@ app.use(cors());
 
 // ======= functions =======
 function searchByTypePet(uPi, target) { // Найти совпадения id юзера в userId пета, и показать пета с совпадением
-  console.log(uPi.pets.slice().filter(pet => pet.type == target));
+  // console.log(uPi.pets.slice().filter(pet => pet.type == target));
   return uPi.pets.slice()
     .filter(pet => pet.type === target);
 }
 
+function havePet(uPi, type) {
+  let users = uPi.users.slice();
+  const a = searchByTypePet(uPi, type)
+    .map(pet => pet.userId);
+  users = users.filter(user => _.indexOf(a, user.id) !== -1); // ?
+  return users;
+}
+
 function populateType(uPi, target) {
-  const usersList = uPi.users.slice();
-  const petsList = uPi.pets.slice().filter(pet => pet.type === target);;
-  let petsPopulate = usersList.map( users => ({
+  const usersList = uPi.users.slice().havePet(uPi, target);
+  const petsList = uPi.pets.slice().searchByTypePet(uPi, target);
+  const petsPopulate = usersList.map( users => ({
     ...users,
     pets: petsList.filter( pet => users.id == pet.userId )
-  }))
+  }));
   return petsPopulate;
 }
 
@@ -73,15 +81,13 @@ app.get('/', async (req, res) => { // Список всей исходной б�
 
 app.get('/users', async (req, res) => { // Cписок пользователей
   const uPi = await usersPets();
-  const havePet = req.query.havePet;
+  const havePetParam = req.query.havePet;
   const type = req.query.type; console.log(type);
   let users = uPi.users.slice();
 
   if (havePet || type) {
     if (havePet) { // Пользователи у которых есть животные type которых указан при запросе в url. /users?havePet=
-      searchByTypePet(uPi, havePet)
-        .map(pet => pet.userId);
-      users = users.filter(user => _.indexOf(searchByType, user.id) !== -1); // ?
+      res.send(havePet(uPi, havePetParam));
     }
     if (type) {
       const resultByPetType = searchByTypePet(uPi, type);
@@ -137,7 +143,7 @@ app.get('/pets/:id', async (req, res) => { // params id or username. Поиск 
       res.send(populatePets(uPi));
     } else if (paramsId == 'type') {
       res.send(populateType(uPi, paramsId));
-    }else {
+    } else {
       const result = searchById(res, paramsId, 'pets', uPi);
       res.json(result);
     }

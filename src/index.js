@@ -13,7 +13,6 @@ app.use(cors());
 
 // ======= functions =======
 function searchByTypePet(uPi, target) { // Найти совпадения id юзера в userId пета, и показать пета с совпадением
-  console.log(uPi.pets.slice().filter(pet => pet.type == target));
   return uPi.pets.slice()
     .filter(pet => pet.type === target);
 }
@@ -38,7 +37,6 @@ function populatePets(uPi) {
     ...pet,
     user: usersList.filter( user => user.id == pet.userId )[0] // Зачем тут индекс [0]? Добавляет в пета весь елемент юзера!
   }));
-  console.log(petsPopulate);
   return petsPopulate;
 }
 
@@ -49,7 +47,6 @@ function populateUsers(uPi) {
     ...users,
     pets: petsList.filter( pet => users.id == pet.userId ) // Добавляет всех петов!
   }));
-  console.log(petsPopulate);
   return petsPopulate;
 }
 // ======= end functions =======
@@ -124,7 +121,15 @@ app.get('/pets/:id', async (req, res) => { // params id or username. Поиск 
   try{
     const paramsId = req.params.id;
     if (paramsId == 'populate') {
-      res.send(populatePets(uPi));
+      let answer = populatePets()(uPi);
+      const type = req.query.type; console.log(type);
+      if (type) {
+        const resultByPetType = searchByTypePet(uPi, type);
+        let answer = populatePets(resultByPetType);
+        res.json(answer);
+      } else {
+        res.send(answer);
+      }
     } else {
       const result = searchById(res, paramsId, 'pets', uPi);
       res.json(result);

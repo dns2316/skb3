@@ -32,20 +32,45 @@ function populateType(uPi, target) {
     ...users,
     pets: petsList.filter( pet => users.id == pet.userId )
   }));
-  console.log(petsPopulate);
   return petsPopulate;
 }
 
-function searchByAgePet(uPi, target, level = 'gt' || 'lt') { // Поиск по возрасту пета
+function populate(usersVar, petsVar) {
+  return usersVar.map( users => ({
+    ...users,
+    pets: petsVar.filter(pet => users.id == pet.userId )
+  }));
+}
+
+function populateAge(uPi, age, level = 'gt' || 'lt') {
+  let levelAnswer = null;
+  const usersList = uPi.users.slice();
+
   if (level == 'gt') { // Старше
-    console.log(uPi.pets.slice().filter(pet => pet.age >= target));
-    return uPi.pets.slice()
-      .filter(pet => pet.age >= target); // больше или равно
+    console.log(uPi.pets.slice().filter(pet => pet.age >= age));
+    levelAnswer = uPi.pets.slice()
+      .filter(pet => pet.age >= age); // больше или равно
+      console.log(levelAnswer);
   }
   if (level == 'lt') { // Младше
-    console.log(uPi.pets.slice().filter(pet => pet.age <= target));
+    levelAnswer = uPi.pets.slice()
+      .filter(pet => pet.age <= age); // меньше или равно
+      console.log(levelAnswer);
+  }
+  const agePopulate = populate(usersList.map(user => user.id == levelAnswer.userId), levelAnswer);
+  return agePopulate;
+}
+
+function searchByAgePet(uPi, age, level = 'gt' || 'lt') { // Поиск по возрасту пета
+  if (level == 'gt') { // Старше
+    console.log(uPi.pets.slice().filter(pet => pet.age >= age));
     return uPi.pets.slice()
-      .filter(pet => pet.age <= target); // меньше или равно
+      .filter(pet => pet.age >= age); // больше или равно
+  }
+  if (level == 'lt') { // Младше
+    console.log(uPi.pets.slice().filter(pet => pet.age <= age));
+    return uPi.pets.slice()
+      .filter(pet => pet.age <= age); // меньше или равно
   }
 }
 
@@ -135,18 +160,33 @@ app.get('/pets', async (req, res) => { // Список животных
 
 app.get('/pets/:id', async (req, res) => { // params id or username. Поиск животного по его ID
   const uPi = await usersPets();
-  try{
+  let answer = null;
+
+  try {
+
     const paramsId = req.params.id;
-    const type = req.query.type; console.log(type);
+    const query = req.query;
+    // const ageGt = req.query.age_gt; // Возраст животных, старше age_gt месяцев
+    // const ageLt = req.query.age_lt; // Возраст животных, младше age_lt месяцев
+
     if (paramsId == 'populate') {
-      if (type) {
-        res.send(populateType(uPi, paramsId));
+      if (query) {
+        if (query.type) {
+          answer = populateType(uPi, query.type);
+        }
+        if (query.age_gt) {
+          answer = populateAge(uPi, query.age_gt, 'gt');
+        }
+        if (query.age_lt) {
+          answer = populateAge(uPi, query.age_lt, 'lt');
+        }
       } else {
-        res.send(populatePets(uPi));
+        answer = populatePets(uPi);
       }
+      res.send(answer);
     } else {
-      const result = searchById(res, paramsId, 'pets', uPi);
-      res.json(result);
+      answer = searchById(res, paramsId, 'pets', uPi);
+      res.json(answer);
     }
   } catch (err) {
     console.log('/pets catch: ', err);

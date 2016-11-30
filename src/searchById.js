@@ -1,6 +1,6 @@
 import usersPets from './usersPets';
 
-export default function searchById(res, id, target, uPi) {
+export default function searchById(id, target, uPi) {
   const re = /[\d]+/; // '+' - 1+ numbers, '*' - 0+ numbers!
   // const uPi = await usersPets();
   if (id) {
@@ -22,7 +22,7 @@ export default function searchById(res, id, target, uPi) {
           pets = pets.filter(item => item.id == id);
       }
         if (pets.length > 0) {
-          return res.json(pets[0]);
+          return pets[0];
         }
       }
 }

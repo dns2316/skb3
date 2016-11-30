@@ -118,7 +118,7 @@ app.get('/users', async (req, res) => { // Cписок пользователе�
       notFound(res);
     }
   } else {
-    res.json(users);
+    res.send(users);
   }
 });
 
@@ -143,7 +143,8 @@ app.get('/users/:id', async (req, res) => { // params id or username. Данны
         res.send(populateUsers(uPi));
       }
     } else {
-    const result = searchById(res, paramsId, 'users', uPi);
+    const result = searchById(paramsId, 'users', uPi);
+    console.log(result);
     res.json(result);
     }
   } catch (err) {
@@ -197,7 +198,7 @@ app.get('/pets/:id', async (req, res) => { // params id or username. Поиск 
       }
       res.send(populate(usersList, petsList)); // если url без query
     } else {
-      answer = searchById(res, paramsId, 'pets', uPi); // просто поиск по id пета
+      answer = searchById(paramsId, 'pets', uPi); // просто поиск по id пета
       res.json(answer);
     }
   } catch (err) {
@@ -211,10 +212,31 @@ app.get('/users/:id/pets', async (req, res) => { // список животны�
   const paramsId = req.params.id;
   try {
     if (paramsId) {
-      const user = searchById(res, paramsId, 'users', uPi);
+      const user = searchById(paramsId, 'users', uPi);
       const userHavePets = uPi.pets.slice()
         .filter(pet => pet.userId == user.id);
       res.send(userHavePets);
+    } else {
+      notFound(res);
+    }
+  } catch (err) {
+    console.log('/users/:id/pets catch: ', err);
+  }
+});
+
+app.get('/users/:id/populate', async (req, res) => { // список животных конкретного пользователя по его username/id
+  const uPi = await usersPets();
+  const paramsId = req.params.id;
+  const petsList = uPi.pets.slice();
+
+  try {
+    if (paramsId) {
+      let user = searchById(paramsId, 'users', uPi);
+      if (!user.pets) {
+        user [ 'pets' ] = petsList.filter(pet => user.id == pet.userId);
+      }
+      console.log(user);
+      res.send(user);
     } else {
       notFound(res);
     }

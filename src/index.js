@@ -86,7 +86,7 @@ function populatePets(uPi) {
 function populateUsers(uPi) {
   const usersList = uPi.users.slice();
   const petsList = uPi.pets.slice();
-  let petsPopulate = usersList.map( users => ({
+  const petsPopulate = usersList.map(users => ({
     ...users,
     pets: petsList.filter( pet => users.id == pet.userId ) // Добавляет всех петов!
   }));
@@ -96,38 +96,24 @@ function populateUsers(uPi) {
 
 app.get('/', async (req, res) => { // Список всей исходной базы
   const uPi = await usersPets();
-  res.json(uPi);
+  return res.json(uPi);
 });
 
 // app.get('/:target/:id' { target: 'users', id: '3' }
 
 app.get('/users', async (req, res) => { // Cписок пользователей
-  try{
-    const uPi = await usersPets();
-    return uPi;
-  } catch (err) {
-    console.log('err upi: ', err);
-  }
-  const havePetParam = req.query.havePet;
-  const type = req.query.type;
+  const uPi = await usersPets();
+  const query = req.query;
   let usersList = uPi.users.slice();
-try{
-  if (havePet || type) {
-    if (havePet) { // Пользователи у которых есть животные type которых указан при запросе в url. /users?havePet=
-      usersList = havePet(uPi, havePetParam);
+
+  try {
+    if (query) {
+      if (query.havePet) { return res.json(havePet(uPi, query.havePet)); }
     }
-    if (type) {
-      usersList = searchByTypePet(uPi, type);
-    } else {
-      notFound(res);
-    }
-    res.send(usersList);
-  } else {
-    res.json(usersList);
+    return res.json(usersList);
+  } catch (err) {
+    console.log('err in /user: ', err);
   }
-} catch (err) {
-  console.log('err in /user: ', err);
-}
 });
 
 app.get('/users/:id', async (req, res) => { // params id or username. Данные конкретного пользователя по его ID
@@ -138,46 +124,54 @@ app.get('/users/:id', async (req, res) => { // params id or username. Данны
 
   try{
     const paramsId = req.params.id;
-    if (paramsId == 'populate') {
-      if (query) {
+    if (paramsId === 'populate') {
         if (query.havePet) {
-          petsList = petsList.filter(pet => pet.type === query.havePet); // Найти петов по типу
-          const petsListNext = petsList.map(pet => pet.userId); // Из собраного листа петов вытащить id юзеров.
-          usersList = usersList.filter(user => _.indexOf(petsListNext, user.id) !== -1);
-          res.send(populate(usersList, petsList));
-          console.log(petsList);
+          const usersWithPetsIDs = petsList
+            .filter(pet => pet.type === query.havePet)
+            .map(pet => pet.userId);
+
+          usersList = usersList.filter(user => _.indexOf(usersWithPetsIDs, user.id) !== -1);
+
+          usersList = usersList.map(user => ({
+            ...user,
+            pets: petsList.filter(pet => pet.userId === user.id)
+          }));
         }
-      } else {
-        res.send(populateUsers(uPi));
+      if (!query.havePet) {
+        usersList = usersList.map(user => ({
+          ...user,
+          pets: petsList.filter(pet => pet.userId === user.id)
+        }));
       }
+      return res.json(usersList);
     } else {
     const result = searchById(paramsId, 'users', uPi);
     console.log(result);
-    res.json(result);
+    if (result){
+      return res.json(result);
     }
+  }
+  return notFound(res);
   } catch (err) {
     console.log('/users catch: ', err);
-    notFound(res);
   }
 });
 
 app.get('/pets', async (req, res) => { // Список животных
   const uPi = await usersPets();
-  const ageGt = req.query.age_gt; // Возраст животных, старше age_gt месяцев
-  const ageLt = req.query.age_lt; // Возраст животных, младше age_lt месяцев
+  const query = req.query;
+  let petsList = uPi.pets.slice();
 
-  if (req.query) {
-    if (ageGt) {
-      const result = searchByAgePet(uPi, ageGt, 'gt');
-      res.json(result);
-    }
-    if (ageLt) {
-      const result = searchByAgePet(uPi, ageLt, 'lt');
-      res.json(result);
-    }
-  } else if (!req.query) {
-    res.json(uPi.pets)
+  if (query) { // Знаю, что не нужно в коде копипастить.
+    console.log('in just query ... without populate. /pets');
+    if (query.type) { petsList = petsList.filter(pet => pet.type == query.type); } // берет лист петов из petsList
+    if (query.age_gt) { petsList = petsList.filter(pet => pet.age > query.age_gt); } // берет лист петов из верхней строки (если в url несколько запросов)
+    if (query.age_lt) { petsList = petsList.filter(pet => pet.age < query.age_lt); } // берет лист петов из верхней строки, что бы показать возраст > x >
+    return res.json(petsList);
+  } else if (!query) {
+    return res.json(uPi.pets);
   }
+  return notFound(res);
 });
 
 app.get('/pets/:id', async (req, res) => { // params id or username. Поиск животного по его ID
@@ -185,33 +179,33 @@ app.get('/pets/:id', async (req, res) => { // params id or username. Поиск 
   let answer = null;
   let petsList = uPi.pets.slice();
   let usersList = uPi.users.slice();
-
+  const paramsId = req.params.id;
+  const query = req.query;
+  console.log(paramsId);
   try {
-    const paramsId = req.params.id;
-    const query = req.query;
     // const ageGt = req.query.age_gt; // Возраст животных, старше age_gt месяцев
     // const ageLt = req.query.age_lt; // Возраст животных, младше age_lt месяцев
-
     if (paramsId == 'populate') {
-      if (query) {
-        if (query.type) { petsList = petsList.filter( pet => pet.type === query.type); } // берет лист петов из 163 строки
-        if (query.age_gt) { petsList = petsList.filter( pet => pet.age > query.age_gt); } // берет лист петов из верхней строки (если в url несколько запросов)
-        if (query.age_lt) { petsList = petsList.filter( pet => pet.age < query.age_lt); } // берет лист петов из верхней строки, что бы показать возраст > x >
-
-        let resultPets = petsList.map( pet => ({ // в подготовленый лист петов добавляет их юзеров.
-          ...pet,
-          user: usersList.filter( user => pet.userId === user.id )[0]
-        }));
-        res.json(resultPets);
-      }
-      res.send(populate(usersList, petsList)); // если url без query
-    } else {
+        if (query.type) { petsList = petsList.filter(pet => pet.type == query.type); } // берет лист петов из petsList
+        if (query.age_gt) { petsList = petsList.filter(pet => pet.age > query.age_gt); } // берет лист петов из верхней строки (если в url несколько запросов)
+        if (query.age_lt) { petsList = petsList.filter(pet => pet.age < query.age_lt); } // берет лист петов из верхней строки, что бы показать возраст > x >
+          console.log('in pets/populate');
+              petsList = petsList.map(pet => ({ // в подготовленый лист петов добавляет их юзеров.
+                ...pet,
+                user: usersList.filter(user => pet.userId === user.id )[0]
+              }));
+              return res.json(petsList);
+        }
+      if (/[\d]+/.test(paramsId)) { // даже если отправить /pets/0 - /[1-9]*/.test скажет true. o_O
       answer = searchById(paramsId, 'pets', uPi); // просто поиск по id пета
-      res.json(answer);
-    }
+        if (answer) {
+          return res.json(answer);
+        }
+      }
+    return notFound(res);
   } catch (err) {
     console.log('/pets catch: ', err);
-    notFound(res);
+    return notFound(res);
   }
 });
 
@@ -225,7 +219,7 @@ app.get('/users/:id/pets', async (req, res) => { // список животны�
         .filter(pet => pet.userId == user.id);
       res.send(userHavePets);
     } else {
-      notFound(res);
+      return notFound(res);
     }
   } catch (err) {
     console.log('/users/:id/pets catch: ', err);
@@ -239,17 +233,34 @@ app.get('/users/:id/populate', async (req, res) => { // список живот�
 
   try {
     if (paramsId) {
-      let user = searchById(paramsId, 'users', uPi);
-      if (!user.pets) {
-        user [ 'pets' ] = petsList.filter(pet => user.id == pet.userId);
-      }
+      const user = populateUsers(uPi).filter(user => user.id == paramsId);
       console.log(user);
-      res.send(user);
-    } else {
-      notFound(res);
+      return res.json(user);
     }
+      return notFound(res);
   } catch (err) {
-    console.log('/users/:id/pets catch: ', err);
+    console.log('/users/:id/populate catch: ', err);
+  }
+});
+
+app.get('/pets/:id/populate', async (req, res) => { // список животных конкретного пользователя по его username/id
+  const uPi = await usersPets();
+  const paramsId = req.params.id;
+  const usersList = uPi.users.slice();
+  const petsList = uPi.pets.slice();
+  let pet = { ...petsList.filter(pet => pet.id == paramsId)[0]};
+
+  try {
+    if (pet) {
+      const petUser = usersList.filter(user => pet.userId == user.id)[0];
+      if (petUser) {
+        pet.user = petUser;
+      }
+      return res.json(pet);
+    }
+    return notFound(res);
+  } catch (err) {
+    console.log('/pets/:id/populate catch: ', err);
   }
 });
 

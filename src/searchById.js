@@ -1,9 +1,6 @@
-import usersPets from './usersPets';
-
 export default function searchById(id, target, uPi) {
   console.log('start find by id');
   const re = /[\d]+/; // '+' - 1+ numbers, '*' - 0+ numbers!
-  // const uPi = await usersPets();
   if (id) {
     if (target == 'users') {
       console.log('find in users');

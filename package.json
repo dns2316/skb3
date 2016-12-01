@@ -56,7 +56,8 @@
     "rollup": "^0.36.3",
     "rollup-plugin-babel": "^2.6.1",
     "nodemon": "^1.11.0",
-    "sinon": "^2.0.0-pre.3"
+    "sinon": "^2.0.0-pre.3",
+    "lodash": "latest"
   },
   "scripts": {
     "lint": "eslint src test tools",

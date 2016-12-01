@@ -3,7 +3,7 @@ import cors from 'cors';
 import _ from 'lodash';
 
 // ======== import 3b ========
-import usersPets from './usersPets';
+const data = require('./usersPets');
 import notFound from './notFound';
 import searchById from './searchById';
 // ======= end import 3b =======
@@ -95,25 +95,23 @@ function populateUsers(uPi) {
 // ======= end functions =======
 
 app.get('/', async (req, res) => { // Список всей исходной базы
-  const uPi = await usersPets();
-  return res.json(uPi);
+  // const uPi = await usersPets();
+  return res.json(data);
 });
 
 // app.get('/:target/:id' { target: 'users', id: '3' }
 
 app.get('/users', async (req, res) => { // Cписок пользователей
-  const uPi = await usersPets();
-  const query = req.query;
-  let usersList = uPi.users.slice();
+    const uPi = await usersPets();
+    const query = req.query;
+    let usersList = uPi.users.slice();
 
-  try {
-    if (query) {
-      if (query.havePet) { return res.json(havePet(uPi, query.havePet)); }
+    try {
+        if (query.havePet) { usersList = havePet(uPi, query.havePet); }
+        return res.json(usersList);
+    } catch (err) {
+        console.log('err in /user: ', err);
     }
-    return res.json(usersList);
-  } catch (err) {
-    console.log('err in /user: ', err);
-  }
 });
 
 app.get('/users/:id', async (req, res) => { // params id or username. Данные конкретного пользователя по его ID

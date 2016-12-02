@@ -4,7 +4,6 @@ import fetch from 'node-fetch';
 const dataUrl = 'https://raw.githubusercontent.com/dns2316/skb3/3b/data.json';
 
 let data = {};
-
 fetch(dataUrl)
     .then((res) => {
         console.log('fetch start!');
@@ -13,5 +12,4 @@ fetch(dataUrl)
     })
     .catch(err => {
         console.log('Error in connect json: ', err);
-    });
-console.log(data);
+    });;

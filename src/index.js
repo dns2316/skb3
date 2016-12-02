@@ -2,26 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import _ from 'lodash';
 import fetch from 'node-fetch';
-
-
-// ======= connected json =======
-
-// ======= end connected json =======
-
-// ======= variables =======
-// let usersSlice = data.users.slice();
-// let petsSlice = data.pets.slice();
-// ======= end variables =======
-
-// ======== import 3b ========
-// import notFound from './notFound';
-// import searchById from './searchById';
-// ======= end import 3b =======
-
-const app = express();
-app.use(cors());
-
-// ======= routers =======
+// ======= routers{ =======
 import rRoot from './routers/root';
 import rUsers from './routers/users';
 import rUsersId from './routers/usersId';
@@ -30,23 +11,43 @@ import rPetsId from './routers/petsId';
 import rUsersIdPets from './routers/usersIdPets';
 import rUsersIdPopulate from './routers/usersIdPopulate';
 import rPetsIdPopulate from './routers/petsIdPopulate';
-// ======= end routers =======
+// ======= }routers =======
 
-app.get('/', rRoot);
+// ======= connected json{ =======
+// const dataUrl = 'https://gist.githubusercontent.com/isuvorov/55f38b82ce263836dadc0503845db4da/raw/data.json';
+const dataUrl = 'https://raw.githubusercontent.com/dns2316/skb3/3b/data.json';
 
-app.get('/users', rUsers);
+let data={};
 
-app.get('/users/:id', rUsersId);
+fetch(dataUrl)
+  .then(async (res) => {
+    data = await res.json();
+  })
+  .catch(err => {
+    console.log('ERROR', err);
+  });
+// ======= }connected json =======
+console.log(data);
+// ======= config{ =======
+const app = express();
+app.use(cors());
+// ======= }config =======
 
-app.get('/pets', rPets);
+app.get('/', rRoot(data));
 
-app.get('/pets/:id', rPetsId);
+app.get('/users', rUsers(data));
 
-app.get('/users/:id/pets', rUsersIdPets);
+app.get('/users/:id', rUsersId(data));
 
-app.get('/users/:id/populate', rUsersIdPopulate);
+app.get('/pets', rPets(data));
 
-app.get('/pets/:id/populate', rPetsIdPopulate);
+app.get('/pets/:id', rPetsId(data));
+
+app.get('/users/:id/pets', rUsersIdPets(data));
+
+app.get('/users/:id/populate', rUsersIdPopulate(data));
+
+app.get('/pets/:id/populate', rPetsIdPopulate(data));
 
 app.listen(3000, () => {
   console.log('App listening on port 3000!');
